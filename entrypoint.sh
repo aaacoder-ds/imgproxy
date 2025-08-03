@@ -19,16 +19,19 @@ case "$IMGPROXY_MALLOC" in
     exit 1
 esac
 
-# Start cron service in background
+# Start cron service in background (as root)
 echo "Starting cron service..."
-service cron start
-
-# Create log file for cleanup script
-touch /var/log/cleanup.log
-chmod 666 /var/log/cleanup.log
-
-echo "Cron service started. Cleanup will run every 6 hours."
-echo "Cleanup logs will be written to /var/log/cleanup.log"
-
-# Execute the original command (imgproxy)
-exec "$@" 
+if [ "$(id -u)" = "0" ]; then
+  service cron start
+  echo "Cron service started. Cleanup will run every 6 hours."
+  echo "Cleanup logs will be written to /var/log/cleanup.log"
+  
+  # Switch to imgproxy user for running the application
+  exec gosu imgproxy "$@"
+else
+  echo "Warning: Cannot start cron service as non-root user. Cleanup will not run automatically."
+  echo "You can run cleanup manually with: docker exec -it <container> /usr/local/bin/cleanup-script.sh"
+  
+  # Execute the original command (imgproxy)
+  exec "$@"
+fi 

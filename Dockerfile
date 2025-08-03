@@ -34,6 +34,7 @@ RUN apt-get update \
     libtcmalloc-minimal4 \
     cron \
     bc \
+    gosu \
   && ln -s /usr/lib/$(uname -m)-linux-gnu/libjemalloc.so.2 /usr/local/lib/libjemalloc.so \
   && ln -s /usr/lib/$(uname -m)-linux-gnu/libtcmalloc_minimal.so.4 /usr/local/lib/libtcmalloc_minimal.so \
   && rm -rf /var/lib/apt/lists/* \
@@ -80,8 +81,11 @@ RUN echo "0 */6 * * * /usr/local/bin/cleanup-script.sh >> /var/log/cleanup.log 2
   && chmod 0644 /etc/cron.d/cleanup \
   && crontab /etc/cron.d/cleanup
 
-USER 999
+# Create a startup script that handles user switching
+COPY --chown=imgproxy:imgproxy entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Don't switch user here - let the entrypoint handle it
 ENTRYPOINT [ "entrypoint.sh" ]
 CMD ["imgproxy"]
 
