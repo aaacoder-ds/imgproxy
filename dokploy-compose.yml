@@ -34,7 +34,7 @@ services:
       - IMGPROXY_PNG_INTERLACED=true
       
       # Security settings for public access (using fixed values for demo)
-      - IMGPROXY_SECRET=${SECRET}
+      - IMGPROXY_KEY=${SECRET}
       - IMGPROXY_SALT=${SALT}
       - IMGPROXY_ALLOWED_SOURCES=*
       - IMGPROXY_ALLOW_ORIGIN=*
