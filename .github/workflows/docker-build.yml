@@ -1,4 +1,4 @@
-name: Build and Push Multi-Arch Docker Image and Packages
+name: Build and Push Multi-Arch Docker Image
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  build-docker:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -52,48 +52,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  build-packages:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Build Docker image for packages
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          platforms: linux/amd64
-          push: false
-          tags: imgproxy:package-build
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Create packages directory
-        run: mkdir -p packages
-
-      - name: Build DEB package
-        run: |
-          docker run --rm -v $(pwd)/packages:/packages imgproxy:package-build \
-            /usr/local/bin/imgproxy-build-package deb /packages
-
-      - name: Build RPM package
-        run: |
-          docker run --rm -v $(pwd)/packages:/packages imgproxy:package-build \
-            /usr/local/bin/imgproxy-build-package rpm /packages
-
-      - name: Build TAR package
-        run: |
-          docker run --rm -v $(pwd)/packages:/packages imgproxy:package-build \
-            /usr/local/bin/imgproxy-build-package tar /packages
-
-      - name: Upload packages as artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: imgproxy-packages
-          path: packages/
-          retention-days: 30
