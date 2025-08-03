@@ -19,6 +19,7 @@ FROM public.ecr.aws/awsguru/aws-lambda-adapter:0.8.4 AS lambda-adapter
 # Final image
 
 FROM public.ecr.aws/ubuntu/ubuntu:noble
+LABEL maintainer="Salim Dohri <salimdohri97@gmail.com>"
 
 RUN apt-get update \
   && apt-get upgrade -y \
@@ -42,12 +43,12 @@ COPY --from=build /opt/imgproxy/bin/imgproxy /opt/imgproxy/bin/
 COPY --from=build /opt/imgproxy/lib /opt/imgproxy/lib
 RUN ln -s /opt/imgproxy/bin/imgproxy /usr/local/bin/imgproxy
 
-COPY docker/imgproxy-build-package /usr/local/bin/
-
-# Copy cleanup script and entrypoint
+# Copy cleanup script and entrypoint first (needed for build package)
 COPY cleanup-script.sh /usr/local/bin/
 COPY entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/cleanup-script.sh /usr/local/bin/entrypoint.sh
+
+COPY docker/imgproxy-build-package /usr/local/bin/
 
 # AWS Lambda adapter
 COPY --from=lambda-adapter /lambda-adapter /opt/extensions/lambda-adapter
@@ -68,9 +69,13 @@ ENV VIPS_VECTOR=167772160
 RUN groupadd -r imgproxy \
   && useradd -r -u 999 -g imgproxy imgproxy \
   && mkdir -p /var/cache/fontconfig \
-  && chmod 777 /var/cache/fontconfig
+  && chmod 777 /var/cache/fontconfig \
+  && mkdir -p /var/log \
+  && touch /var/log/cleanup.log \
+  && chown -R imgproxy:imgproxy /var/log/cleanup.log \
+  && chmod 666 /var/log/cleanup.log
 
-# Create cron job for cleanup
+# Create cron job for cleanup (as root, will be accessible by imgproxy user)
 RUN echo "0 */6 * * * /usr/local/bin/cleanup-script.sh >> /var/log/cleanup.log 2>&1" > /etc/cron.d/cleanup \
   && chmod 0644 /etc/cron.d/cleanup \
   && crontab /etc/cron.d/cleanup
