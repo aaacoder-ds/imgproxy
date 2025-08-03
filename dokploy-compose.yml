@@ -42,7 +42,7 @@ services:
       # Watermark settings (disabled for public use)
       - IMGPROXY_WATERMARK_DATA=
       - IMGPROXY_WATERMARK_URL=
-      - IMGPROXY_WATERMARK_OPACITY=0
+      - IMGPROXY_WATERMARK_OPACITY=0.6
       
       # Image processing settings
       - IMGPROXY_STRIP_METADATA=true
