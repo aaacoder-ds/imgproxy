@@ -58,6 +58,10 @@ if [ -d /opt/imgproxy/share ]; then
   cp -r /opt/imgproxy/share opt/imgproxy/
 fi
 
+# Copy cleanup script
+cp /usr/local/bin/cleanup-script.sh opt/imgproxy/libexec/
+chmod +x opt/imgproxy/libexec/cleanup-script.sh
+
 # ==============================================================================
 # Patching RPATHs
 
@@ -160,6 +164,23 @@ if [ -f "/etc/imgproxy.rc" ] && [ "$(readlink -f "/etc/imgproxy.rc")" != "$IMGPR
   source /etc/imgproxy.rc
 fi
 
+# Setup cleanup cron job if not already set up
+CLEANUP_CRON="/etc/cron.d/imgproxy-cleanup"
+if [ ! -f "$CLEANUP_CRON" ]; then
+  echo "0 */6 * * * root /opt/imgproxy/libexec/cleanup-script.sh >> /var/log/imgproxy-cleanup.log 2>&1" > "$CLEANUP_CRON"
+  chmod 0644 "$CLEANUP_CRON"
+  # Reload cron if it's running
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet cron; then
+    systemctl reload cron
+  elif command -v service >/dev/null 2>&1; then
+    service cron reload 2>/dev/null || true
+  fi
+fi
+
+# Create log file for cleanup script
+touch /var/log/imgproxy-cleanup.log 2>/dev/null || true
+chmod 666 /var/log/imgproxy-cleanup.log 2>/dev/null || true
+
 IMGPROXY_BIN=$(readlink -f "$SCRIPT_DIR/../libexec/imgproxy")
 $IMGPROXY_BIN $@
 
@@ -213,11 +234,12 @@ Version: $VERSION-$RELEASE
 Section: base
 Priority: optional
 Architecture: $DEB_ARCH
-Depends: bash, libc6, libstdc++6, fontconfig-config, ca-certificates, media-types
+Depends: bash, libc6, libstdc++6, fontconfig-config, ca-certificates, media-types, cron, bc
 Maintainer: Foxes With Matches <info@imgproxy.net>
 Homepage: https://imgproxy.net
 Description: imgproxy
  imgproxy is a fast and secure standalone server for resizing and converting remote images.
+ Includes automatic cleanup functionality for managing disk space.
 EOF
 
     cat << 'EOF' > imgproxy/DEBIAN/conffiles
@@ -232,10 +254,19 @@ if [ ! -f /etc/imgproxy.rc ]; then
   ln -s /opt/imgproxy/etc/imgproxy.rc /etc/imgproxy.rc
 fi
 
+# Ensure cron service is enabled and started
+if command -v systemctl >/dev/null 2>&1; then
+  systemctl enable cron 2>/dev/null || true
+  systemctl start cron 2>/dev/null || true
+elif command -v service >/dev/null 2>&1; then
+  service cron start 2>/dev/null || true
+fi
+
 echo
 echo "imgproxy installed successfully!"
 echo "You can edit /etc/imgproxy.rc to configure imgproxy or set imgproxy environment variables in your shell profile."
 echo "See https://docs.imgproxy.net/configuration/options for more information."
+echo "Automatic cleanup is configured to run every 6 hours. Check /var/log/imgproxy-cleanup.log for cleanup activities."
 EOF
     chmod +x imgproxy/DEBIAN/postinst
 
@@ -249,6 +280,17 @@ fi
 
 if [ "$(readlink -f /etc/imgproxy.rc)" == "$(readlink -f /opt/imgproxy/etc/imgproxy.rc)" ]; then
   rm /etc/imgproxy.rc
+fi
+
+# Remove cleanup cron job
+if [ -f /etc/cron.d/imgproxy-cleanup ]; then
+  rm /etc/cron.d/imgproxy-cleanup
+  # Reload cron if it's running
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet cron; then
+    systemctl reload cron 2>/dev/null || true
+  elif command -v service >/dev/null 2>&1; then
+    service cron reload 2>/dev/null || true
+  fi
 fi
 EOF
     chmod +x imgproxy/DEBIAN/prerm
@@ -287,6 +329,8 @@ Requires: libstdc++
 Requires: fontconfig
 Requires: ca-certificates
 Requires: shared-mime-info
+Requires: cronie
+Requires: bc
 Requires(interp): /bin/bash
 Requires(post): /bin/bash
 Requires(preun): /bin/bash
@@ -310,6 +354,14 @@ if [ ! -f /etc/imgproxy.rc ]; then
   ln -s /opt/imgproxy/etc/imgproxy.rc /etc/imgproxy.rc
 fi
 
+# Ensure cron service is enabled and started
+if command -v systemctl >/dev/null 2>&1; then
+  systemctl enable crond 2>/dev/null || true
+  systemctl start crond 2>/dev/null || true
+elif command -v service >/dev/null 2>&1; then
+  service crond start 2>/dev/null || true
+fi
+
 %preun
 if [ -d /opt/imgproxy/var ]; then
   rm -rf /opt/imgproxy/var
@@ -317,6 +369,17 @@ fi
 
 if [ "$(readlink -f /etc/imgproxy.rc)" == "$(readlink -f /opt/imgproxy/etc/imgproxy.rc)" ]; then
   rm /etc/imgproxy.rc
+fi
+
+# Remove cleanup cron job
+if [ -f /etc/cron.d/imgproxy-cleanup ]; then
+  rm /etc/cron.d/imgproxy-cleanup
+  # Reload cron if it's running
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet crond; then
+    systemctl reload crond 2>/dev/null || true
+  elif command -v service >/dev/null 2>&1; then
+    service crond reload 2>/dev/null || true
+  fi
 fi
 
 %clean

@@ -1,0 +1,15 @@
+[Unit]
+Description=imgproxy Data Cleanup Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/cleanup-script.sh
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target 
