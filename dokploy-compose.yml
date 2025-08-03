@@ -1,14 +1,12 @@
 version: '3.8'
-
 services:
   imgproxy:
     image: ghcr.io/aaacoder-ds/imgproxy:latest
     container_name: imgproxy
     restart: unless-stopped
     ports:
-      - "3083:8080"
+      - '3083:8080'
     environment:
-      # Basic configuration
       - IMGPROXY_BIND=:8080
       - IMGPROXY_NETWORK_TIMEOUT=30
       - IMGPROXY_TIMEOUT=30
@@ -17,34 +15,22 @@ services:
       - IMGPROXY_MAX_REDIRECTS=5
       - IMGPROXY_PATH_PREFIX=
       - IMGPROXY_IGNORE_SSL_VERIFICATION=false
-      
-      # Performance and concurrency
       - IMGPROXY_CONCURRENCY=4
       - IMGPROXY_MAX_CLIENTS=50
-      
-      # Cache configuration with periodic cleanup
       - IMGPROXY_TTL=604800
       - IMGPROXY_CACHE_SIZE=500
       - IMGPROXY_CACHE_CLEANUP_INTERVAL=3600
-      
-      # Image quality settings
       - IMGPROXY_QUALITY=85
       - IMGPROXY_FORMAT_QUALITY=jpeg=85,webp=85,avif=75
       - IMGPROXY_JPEG_PROGRESSIVE=true
       - IMGPROXY_PNG_INTERLACED=true
-      
-      # Security settings for public access (using fixed values for demo)
       - IMGPROXY_KEY=${SECRET}
       - IMGPROXY_SALT=${SALT}
       - IMGPROXY_ALLOWED_SOURCES=*
       - IMGPROXY_ALLOW_ORIGIN=*
-      
-      # Watermark settings (disabled for public use)
       - IMGPROXY_WATERMARK_DATA=
       - IMGPROXY_WATERMARK_URL=
       - IMGPROXY_WATERMARK_OPACITY=0.6
-      
-      # Image processing settings
       - IMGPROXY_STRIP_METADATA=true
       - IMGPROXY_STRIP_COLOR_PROFILE=true
       - IMGPROXY_AUTO_ROTATE=true
@@ -52,8 +38,6 @@ services:
       - IMGPROXY_ENABLE_CLIENT_HINTS=true
       - IMGPROXY_ENABLE_TRUE_COLOR=true
       - IMGPROXY_ENABLE_SHARPR=false
-      
-      # Format support
       - IMGPROXY_ENABLE_AVIF=true
       - IMGPROXY_ENABLE_WEBP=true
       - IMGPROXY_ENABLE_JXL=false
@@ -65,8 +49,6 @@ services:
       - IMGPROXY_ENABLE_PDF=false
       - IMGPROXY_ENABLE_SVG=true
       - IMGPROXY_ENABLE_VIDEO_THUMBNAILS=false
-      
-      # Limits for public access
       - IMGPROXY_MAX_ANIMATION_FRAMES=300
       - IMGPROXY_MAX_SRC_RESOLUTION=268435456
       - IMGPROXY_MAX_SRC_FILE_SIZE=10485760
@@ -75,24 +57,21 @@ services:
       - IMGPROXY_SANITIZE_SVG=true
       - IMGPROXY_MAX_MEMORY_USAGE=268435456
       - IMGPROXY_MAX_IMAGE_RESOLUTION=268435456
-      
-      # Response settings
       - IMGPROXY_RETURN_ATTACHMENT=false
       - IMGPROXY_RETURN_ERROR_BODY=true
       - IMGPROXY_USE_SHORT_OPTIONS=false
-      
-      # Logging
       - IMGPROXY_LOG_LEVEL=info
       - IMGPROXY_LOG_FORMAT=json
-      
-      # Development/Testing settings
       - IMGPROXY_DEVELOPMENT_ERRORS_MODE=false
       - IMGPROXY_IGNORE_SSL_VERIFICATION=false
-      
     volumes:
       - /mnt/sdb/img:/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      test:
+        - CMD
+        - wget
+        - '-qO-'
+        - http://localhost:8080/health
       interval: 30s
       timeout: 10s
       retries: 3
@@ -103,3 +82,21 @@ services:
           memory: 2G
         reservations:
           memory: 512M
+    labels:
+      - traefik.docker.network=dokploy-network
+      - traefik.http.routers.img-app-oqievs-11-web.rule=Host(`img.aaacoder.xyz`)
+      - traefik.http.routers.img-app-oqievs-11-web.entrypoints=web
+      - traefik.http.services.img-app-oqievs-11-web.loadbalancer.server.port=8080
+      - traefik.http.routers.img-app-oqievs-11-web.service=img-app-oqievs-11-web
+      - traefik.http.routers.img-app-oqievs-11-web.middlewares=redirect-to-https@file
+      - traefik.http.routers.img-app-oqievs-11-websecure.rule=Host(`img.aaacoder.xyz`)
+      - traefik.http.routers.img-app-oqievs-11-websecure.entrypoints=websecure
+      - traefik.http.services.img-app-oqievs-11-websecure.loadbalancer.server.port=8080
+      - traefik.http.routers.img-app-oqievs-11-websecure.service=img-app-oqievs-11-web
+      - traefik.http.routers.img-app-oqievs-11-websecure.tls.certresolver=letsencrypt
+      - traefik.enable=true
+    networks:
+      - dokploy-network
+networks:
+  dokploy-network:
+    external: true
