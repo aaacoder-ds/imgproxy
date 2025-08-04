@@ -85,15 +85,12 @@ var landingTmpl = []byte(`
 			</div>
 		</div>
 		<div class="footer">
-			<a href="https://imgproxy.net/" target="_blank">Image Processing</a> |
-			<a href="https://imgproxy.net/" target="_blank">Image Optimization</a> |
-			<a href="https://imgproxy.net/" target="_blank">CDN Image Transformation</a> |
-			<a href="https://imgproxy.net/" target="_blank">WebP Conversion</a> |
-			<a href="https://imgproxy.net/" target="_blank">Image Resizing</a> |
-			<a href="https://imgproxy.net/" target="_blank">Image Compression</a> |
-			<a href="https://imgproxy.net/" target="_blank">Image Proxy Server</a> |
-			<a href="https://imgproxy.net/" target="_blank">Web Development Tools</a> |
-			<a href="https://imgproxy.net/" target="_blank">Image Optimization Services</a>
+			<a href="/processing">Image Processing</a> |
+			<a href="/watermark">Watermarking</a> |
+			<a href="/features">Features</a> |
+			<a href="/api">API Documentation</a> |
+			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
+			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
 		</div>
 		<script defer data-domain="img.aaacoder.xyz" src="https://plausible.aaacoder.xyz/js/script.js"></script>
 		<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>

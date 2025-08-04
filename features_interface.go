@@ -155,10 +155,28 @@ var featuresInterfaceTmpl = []byte(`
 				color: #ccc;
 				font-size: 1rem;
 			}
+			.footer {
+				position: fixed;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				background: rgba(13, 15, 21, 0.9);
+				padding: 20px;
+				text-align: center;
+				font-size: 14px;
+			}
+			.footer a {
+				color: #53D1FF;
+				margin: 0 10px;
+			}
+			.main-content {
+				margin-bottom: 100px;
+			}
 		</style>
 	</head>
 	<body>
-		<div class="container">
+		<div class="main-content">
+			<div class="container">
 			<div class="header">
 				<h1>Features Overview</h1>
 				<p>Discover the powerful capabilities of imgproxy</p>
@@ -343,6 +361,24 @@ var featuresInterfaceTmpl = []byte(`
 				</p>
 			</div>
 		</div>
+		</div>
+
+		<div class="footer">
+			<a href="/processing">Image Processing</a> |
+			<a href="/watermark">Watermarking</a> |
+			<a href="/features">Features</a> |
+			<a href="/api">API Documentation</a> |
+			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
+			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
+		</div>
+
+		<script defer data-domain="img.aaacoder.xyz" src="https://plausible.aaacoder.xyz/js/script.js"></script>
+		<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js"></script>
+		<script type="text/javascript">
+			aclib.runAutoTag({
+				zoneId: 'mhjbgr66iw',
+			});
+		</script>
 	</body>
 </html>
 `)
