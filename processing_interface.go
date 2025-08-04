@@ -320,15 +320,15 @@ var processingInterfaceTmpl = []byte(`
 				const options = [];
 				
 				if (formData.get('resizeType') && formData.get('width') && formData.get('height')) {
-					options.push(`resize:${formData.get('resizeType')}:${formData.get('width')}:${formData.get('height')}:${formData.get('enlarge')}`);
+					options.push('resize:' + formData.get('resizeType') + ':' + formData.get('width') + ':' + formData.get('height') + ':' + formData.get('enlarge'));
 				}
 				
 				if (formData.get('quality')) {
-					options.push(`quality:${formData.get('quality')}`);
+					options.push('quality:' + formData.get('quality'));
 				}
 				
 				if (formData.get('format')) {
-					options.push(`format:${formData.get('format')}`);
+					options.push('format:' + formData.get('format'));
 				}
 
 				// Build imgproxy URL
@@ -338,7 +338,7 @@ var processingInterfaceTmpl = []byte(`
 				const sourceUrl = encodeURIComponent(formData.get('sourceUrl'));
 				const extension = formData.get('format') || 'jpg';
 				
-				const imgproxyUrl = `${baseUrl}/${signature}/${processingOptions}/plain/${sourceUrl}@${extension}`;
+				const imgproxyUrl = baseUrl + '/' + signature + '/' + processingOptions + '/plain/' + sourceUrl + '@' + extension;
 				
 				// Display results
 				document.getElementById('urlDisplay').textContent = imgproxyUrl;

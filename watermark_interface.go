@@ -361,11 +361,11 @@ var watermarkInterfaceTmpl = []byte(`
 					const color = formData.get('watermarkColor') || '#ffffff';
 					const opacity = formData.get('watermarkOpacity') || 80;
 					
-					previewBox.innerHTML = `<div style="color: ${color}; opacity: ${opacity/100}; font-size: 24px; font-weight: bold;">${text}</div>`;
+					previewBox.innerHTML = '<div style="color: ' + color + '; opacity: ' + (opacity/100) + '; font-size: 24px; font-weight: bold;">' + text + '</div>';
 				} else {
 					const imageUrl = formData.get('watermarkImageUrl');
 					if (imageUrl) {
-						previewBox.innerHTML = `<img src="${imageUrl}" style="max-width: 100px; max-height: 100px; opacity: ${formData.get('watermarkOpacity')/100 || 0.8};">`;
+						previewBox.innerHTML = '<img src="' + imageUrl + '" style="max-width: 100px; max-height: 100px; opacity: ' + (formData.get('watermarkOpacity')/100 || 0.8) + ';">';
 					} else {
 						previewBox.innerHTML = '<p>Enter watermark image URL to see preview</p>';
 					}
@@ -394,7 +394,7 @@ var watermarkInterfaceTmpl = []byte(`
 					const offsetY = formData.get('watermarkOffsetY');
 					
 					if (text) {
-						options.push(\`watermark_text:\${text}:\${font}:\${color}:\${opacity}:\${gravity}:\${offsetX}:\${offsetY}\`);
+						options.push('watermark_text:' + text + ':' + font + ':' + color + ':' + opacity + ':' + gravity + ':' + offsetX + ':' + offsetY);
 					}
 				} else {
 					const imageUrl = formData.get('watermarkImageUrl');
@@ -405,7 +405,7 @@ var watermarkInterfaceTmpl = []byte(`
 					const offsetY = formData.get('watermarkOffsetY');
 					
 					if (imageUrl) {
-						options.push(\`watermark_url:\${encodeURIComponent(imageUrl)}:\${size}:\${opacity}:\${gravity}:\${offsetX}:\${offsetY}\`);
+						options.push('watermark_url:' + encodeURIComponent(imageUrl) + ':' + size + ':' + opacity + ':' + gravity + ':' + offsetX + ':' + offsetY);
 					}
 				}
 
@@ -415,7 +415,7 @@ var watermarkInterfaceTmpl = []byte(`
 				const processingOptions = options.join('/');
 				const sourceUrl = encodeURIComponent(formData.get('sourceUrl'));
 				
-				const imgproxyUrl = \`\${baseUrl}/\${signature}/\${processingOptions}/plain/\${sourceUrl}@jpg\`;
+				const imgproxyUrl = baseUrl + '/' + signature + '/' + processingOptions + '/plain/' + sourceUrl + '@jpg';
 				
 				// Display results
 				document.getElementById('urlDisplay').textContent = imgproxyUrl;
