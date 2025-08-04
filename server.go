@@ -28,6 +28,12 @@ func buildRouter() *router.Router {
 	r.GET("/", handleLanding, true)
 	r.GET("", handleLanding, true)
 
+	// Web interface routes
+	r.GET("/processing", handleProcessingInterface, true)
+	r.GET("/watermark", handleWatermarkInterface, true)
+	r.GET("/features", handleFeaturesInterface, true)
+	r.GET("/api", handleAPIInterface, true)
+
 	r.GET("/", withMetrics(withPanicHandler(withCORS(withSecret(handleProcessing)))), false)
 
 	r.HEAD("/", withCORS(handleHead), false)

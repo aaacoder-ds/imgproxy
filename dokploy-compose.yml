@@ -1,9 +1,13 @@
-version: '3.8'
 services:
   imgproxy:
     image: ghcr.io/aaacoder-ds/imgproxy:latest
-    container_name: imgproxy
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
     ports:
       - '3083:8080'
     environment:
@@ -14,7 +18,6 @@ services:
       - IMGPROXY_DOWNLOAD_TIMEOUT=30
       - IMGPROXY_MAX_REDIRECTS=5
       - IMGPROXY_PATH_PREFIX=
-      - IMGPROXY_IGNORE_SSL_VERIFICATION=false
       - IMGPROXY_CONCURRENCY=4
       - IMGPROXY_MAX_CLIENTS=50
       - IMGPROXY_TTL=604800
@@ -24,8 +27,8 @@ services:
       - IMGPROXY_FORMAT_QUALITY=jpeg=85,webp=85,avif=75
       - IMGPROXY_JPEG_PROGRESSIVE=true
       - IMGPROXY_PNG_INTERLACED=true
-      - IMGPROXY_KEY=${SECRET}
-      - IMGPROXY_SALT=${SALT}
+      - IMGPROXY_KEY=${SECRET:-}
+      - IMGPROXY_SALT=${SALT:-}
       - IMGPROXY_ALLOWED_SOURCES=*
       - IMGPROXY_ALLOW_ORIGIN=*
       - IMGPROXY_WATERMARK_DATA=
@@ -67,36 +70,4 @@ services:
     volumes:
       - /mnt/sdb/img:/data
     healthcheck:
-      test:
-        - CMD
-        - wget
-        - '-qO-'
-        - http://localhost:8080/health
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-        reservations:
-          memory: 512M
-    labels:
-      - traefik.docker.network=dokploy-network
-      - traefik.http.routers.img-app-oqievs-11-web.rule=Host(`img.aaacoder.xyz`)
-      - traefik.http.routers.img-app-oqievs-11-web.entrypoints=web
-      - traefik.http.services.img-app-oqievs-11-web.loadbalancer.server.port=8080
-      - traefik.http.routers.img-app-oqievs-11-web.service=img-app-oqievs-11-web
-      - traefik.http.routers.img-app-oqievs-11-web.middlewares=redirect-to-https@file
-      - traefik.http.routers.img-app-oqievs-11-websecure.rule=Host(`img.aaacoder.xyz`)
-      - traefik.http.routers.img-app-oqievs-11-websecure.entrypoints=websecure
-      - traefik.http.services.img-app-oqievs-11-websecure.loadbalancer.server.port=8080
-      - traefik.http.routers.img-app-oqievs-11-websecure.service=img-app-oqievs-11-web
-      - traefik.http.routers.img-app-oqievs-11-websecure.tls.certresolver=letsencrypt
-      - traefik.enable=true
-    networks:
-      - dokploy-network
-networks:
-  dokploy-network:
-    external: true
+      disable: true
