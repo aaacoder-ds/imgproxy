@@ -37,6 +37,7 @@ type Router struct {
 
 	Routes        []*route
 	HealthHandler RouteHandler
+    NotFoundHandler RouteHandler
 }
 
 func (r *route) isMatch(req *http.Request) bool {
@@ -158,6 +159,11 @@ func (r *Router) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	LogResponse(reqID, req, 404, newRouteNotDefinedError(req.URL.Path))
+
+	if req.Method == http.MethodGet && r.NotFoundHandler != nil {
+		r.NotFoundHandler(reqID, rw, req)
+		return
+	}
 
 	rw.Header().Set("Content-Type", "text/plain")
 	rw.WriteHeader(404)

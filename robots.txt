@@ -5,6 +5,5 @@ Allow: /
 Allow: /processing
 Allow: /watermark
 Allow: /features
-Allow: /api
 
 Sitemap: https://img.aaacoder.xyz/sitemap.xml 

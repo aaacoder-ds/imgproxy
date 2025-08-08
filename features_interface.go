@@ -7,6 +7,7 @@ var featuresInterfaceTmpl = []byte(`
 <html>
 	<head>
 		<title>Features Overview - imgproxy</title>
+		<meta charset="utf-8">
 		<meta name="description" content="Comprehensive overview of imgproxy features - image processing, optimization, transformation, and more">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
@@ -186,7 +187,6 @@ var featuresInterfaceTmpl = []byte(`
 				<a href="/">Processing</a>
 				<a href="/watermark">Watermark</a>
 				<a href="/features" class="active">Features</a>
-				<a href="/api">API Docs</a>
 			</div>
 
 			<div class="stats-section">
@@ -213,7 +213,7 @@ var featuresInterfaceTmpl = []byte(`
 
 			<div class="feature-grid">
 				<div class="feature-card">
-					<h3>🖼️ Image Resizing</h3>
+					<h3>&#128444;&#65039; Image Resizing</h3>
 					<p>Resize images with multiple algorithms and maintain aspect ratios</p>
 					<ul class="feature-list">
 						<li>Fit, Fill, Force, and Auto resize modes</li>
@@ -228,7 +228,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 
 				<div class="feature-card">
-					<h3>💧 Watermarking</h3>
+					<h3>&#128167; Watermarking</h3>
 					<p>Add text and image watermarks with precise positioning</p>
 					<ul class="feature-list">
 						<li>Text watermarks with custom fonts</li>
@@ -243,7 +243,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 
 				<div class="feature-card">
-					<h3>🎨 Image Filters</h3>
+					<h3>&#127912; Image Filters</h3>
 					<p>Apply various filters and effects to enhance images</p>
 					<ul class="feature-list">
 						<li>Brightness, Contrast, Saturation</li>
@@ -258,7 +258,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 
 				<div class="feature-card">
-					<h3>✂️ Cropping & Trimming</h3>
+					<h3>&#9986;&#65039; Cropping & Trimming</h3>
 					<p>Precise image cropping and automatic trimming</p>
 					<ul class="feature-list">
 						<li>Smart cropping with gravity</li>
@@ -273,7 +273,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 
 				<div class="feature-card">
-					<h3>🔄 Format Conversion</h3>
+					<h3>&#128260; Format Conversion</h3>
 					<p>Convert between multiple image formats with optimization</p>
 					<ul class="feature-list">
 						<li>JPEG, PNG, WebP, AVIF support</li>
@@ -288,7 +288,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 
 				<div class="feature-card">
-					<h3>🛡️ Security Features</h3>
+					<h3>&#128737;&#65039; Security Features</h3>
 					<p>Built-in security to protect your image processing</p>
 					<ul class="feature-list">
 						<li>URL signing and encryption</li>
@@ -299,11 +299,11 @@ var featuresInterfaceTmpl = []byte(`
 					<div class="code-example">
 						max_src_resolution:268402689/max_src_file_size:10485760
 					</div>
-					<a href="/api" class="btn">Learn Security</a>
+                    <a href="/features" class="btn">Learn Security</a>
 				</div>
 
 				<div class="feature-card">
-					<h3>⚡ Performance</h3>
+					<h3>&#9889; Performance</h3>
 					<p>Optimized for high-performance image processing</p>
 					<ul class="feature-list">
 						<li>LibVIPS backend for speed</li>
@@ -314,11 +314,11 @@ var featuresInterfaceTmpl = []byte(`
 					<div class="code-example">
 						# Processes 1000+ images per second
 					</div>
-					<a href="/api" class="btn">View Performance</a>
+                    <a href="/features" class="btn">View Performance</a>
 				</div>
 
 				<div class="feature-card">
-					<h3>🌐 Multiple Sources</h3>
+					<h3>&#127760; Multiple Sources</h3>
 					<p>Support for various image sources and storage</p>
 					<ul class="feature-list">
 						<li>HTTP/HTTPS URLs</li>
@@ -329,11 +329,11 @@ var featuresInterfaceTmpl = []byte(`
 					<div class="code-example">
 						# Works with any accessible image URL
 					</div>
-					<a href="/api" class="btn">Learn Sources</a>
+                    <a href="/features" class="btn">Learn Sources</a>
 				</div>
 
 				<div class="feature-card">
-					<h3>📊 Monitoring & Metrics</h3>
+					<h3>&#128202; Monitoring & Metrics</h3>
 					<p>Comprehensive monitoring and analytics</p>
 					<ul class="feature-list">
 						<li>Prometheus metrics</li>
@@ -344,12 +344,12 @@ var featuresInterfaceTmpl = []byte(`
 					<div class="code-example">
 						# Built-in /health endpoint
 					</div>
-					<a href="/api" class="btn">View Metrics</a>
+                    <a href="/features" class="btn">View Metrics</a>
 				</div>
 			</div>
 
 			<div class="feature-card" style="grid-column: 1 / -1;">
-				<h3>🚀 Getting Started</h3>
+				<h3>&#128640; Getting Started</h3>
 				<p>Ready to start using imgproxy? Here's a simple example:</p>
 				<div class="code-example">
 					# Basic resize example
@@ -357,7 +357,7 @@ var featuresInterfaceTmpl = []byte(`
 				</div>
 				<p style="margin-top: 15px;">
 					<a href="/" class="btn">Try Processing Interface</a>
-					<a href="/api" class="btn">View API Documentation</a>
+                    
 				</p>
 			</div>
 		</div>
@@ -367,7 +367,6 @@ var featuresInterfaceTmpl = []byte(`
 			<a href="/processing">Image Processing</a> |
 			<a href="/watermark">Watermarking</a> |
 			<a href="/features">Features</a> |
-			<a href="/api">API Documentation</a> |
 			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
 			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
 		</div>
@@ -384,7 +383,8 @@ var featuresInterfaceTmpl = []byte(`
 `)
 
 func handleFeaturesInterface(reqID string, rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Add("Set-Cookie", uiAccessCookieName+"=1; Path=/; Max-Age=86400")
 	rw.WriteHeader(200)
 	rw.Write(featuresInterfaceTmpl)
 } 

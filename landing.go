@@ -7,8 +7,10 @@ var landingTmpl = []byte(`
 <html>
 	<head>
 		<title>Hey, I'm imgproxy!</title>
+		<meta charset="utf-8">
 		<meta name="description" content="Fast and secure image processing server for web applications, CDN optimization, and image transformation services">
 		<meta name="keywords" content="image processing, image optimization, CDN, image transformation, webp conversion, image resizing, image compression, image proxy, image server, web development, image optimization tools">
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	</head>
 	<body style="background: #0d0f15">
 		<style>
@@ -42,7 +44,7 @@ var landingTmpl = []byte(`
 				margin-bottom: 100px;
 			}
 		</style>
-		<div class="main-content">
+			<div class="main-content">
 			<a href="https://imgproxy.net/" target="_blank" style="display: block; width: 266px; margin: 0 auto">
 				<svg xmlns="http://www.w3.org/2000/svg" width="330" height="108" fill="none">
 					<path fill="#005568" fill-opacity=".5" d="M72 20H20v6h52v-6Zm0 62H20v6h52v-6ZM0 40h6v28H0V40Zm92 0h-6v28h6V40Z"/>
@@ -61,21 +63,18 @@ var landingTmpl = []byte(`
 					<h2 style="color: #53D1FF; margin-bottom: 20px;">Try Our Interactive Interfaces</h2>
 					<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
 						<a href="/processing" style="background: rgba(83, 209, 255, 0.1); border: 1px solid #53D1FF; color: #53D1FF; padding: 15px; border-radius: 8px; text-decoration: none; transition: all 0.3s; display: block;">
-							<h3 style="margin: 0 0 10px 0;">🖼️ Processing</h3>
+							<h3 style="margin: 0 0 10px 0;">&#128444;&#65039; Processing</h3>
 							<p style="margin: 0; font-size: 14px;">Resize, crop, and transform images</p>
 						</a>
 						<a href="/watermark" style="background: rgba(83, 209, 255, 0.1); border: 1px solid #53D1FF; color: #53D1FF; padding: 15px; border-radius: 8px; text-decoration: none; transition: all 0.3s; display: block;">
-							<h3 style="margin: 0 0 10px 0;">💧 Watermark</h3>
+							<h3 style="margin: 0 0 10px 0;">&#128167; Watermark</h3>
 							<p style="margin: 0; font-size: 14px;">Add text and image watermarks</p>
 						</a>
 						<a href="/features" style="background: rgba(83, 209, 255, 0.1); border: 1px solid #53D1FF; color: #53D1FF; padding: 15px; border-radius: 8px; text-decoration: none; transition: all 0.3s; display: block;">
-							<h3 style="margin: 0 0 10px 0;">✨ Features</h3>
+							<h3 style="margin: 0 0 10px 0;">&#10024; Features</h3>
 							<p style="margin: 0; font-size: 14px;">Explore all capabilities</p>
 						</a>
-						<a href="/api" style="background: rgba(83, 209, 255, 0.1); border: 1px solid #53D1FF; color: #53D1FF; padding: 15px; border-radius: 8px; text-decoration: none; transition: all 0.3s; display: block;">
-							<h3 style="margin: 0 0 10px 0;">📚 API Docs</h3>
-							<p style="margin: 0; font-size: 14px;">Complete API reference</p>
-						</a>
+						
 					</div>
 				</div>
 				
@@ -84,11 +83,10 @@ var landingTmpl = []byte(`
 				</p>
 			</div>
 		</div>
-		<div class="footer">
+			<div class="footer">
 			<a href="/processing">Image Processing</a> |
 			<a href="/watermark">Watermarking</a> |
 			<a href="/features">Features</a> |
-			<a href="/api">API Documentation</a> |
 			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
 			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
 		</div>
@@ -104,7 +102,8 @@ var landingTmpl = []byte(`
 `)
 
 func handleLanding(reqID string, rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Add("Set-Cookie", uiAccessCookieName+"=1; Path=/; Max-Age=86400")
 	rw.WriteHeader(200)
 	rw.Write(landingTmpl)
 }

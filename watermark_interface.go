@@ -7,6 +7,7 @@ var watermarkInterfaceTmpl = []byte(`
 <html>
 	<head>
 		<title>Watermark Interface - imgproxy</title>
+		<meta charset="utf-8">
 		<meta name="description" content="Add watermarks to images with imgproxy - text and image watermarks with positioning and styling options">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
@@ -197,7 +198,6 @@ var watermarkInterfaceTmpl = []byte(`
 				<a href="/">Processing</a>
 				<a href="/watermark" class="active">Watermark</a>
 				<a href="/features">Features</a>
-				<a href="/api">API Docs</a>
 			</div>
 
 			<form id="watermarkForm">
@@ -313,7 +313,6 @@ var watermarkInterfaceTmpl = []byte(`
 			<a href="/processing">Image Processing</a> |
 			<a href="/watermark">Watermarking</a> |
 			<a href="/features">Features</a> |
-			<a href="/api">API Documentation</a> |
 			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
 			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
 		</div>
@@ -377,7 +376,7 @@ var watermarkInterfaceTmpl = []byte(`
 				addWatermark();
 			});
 
-			function addWatermark() {
+            function addWatermark() {
 				const formData = new FormData(document.getElementById('watermarkForm'));
 				const options = [];
 				
@@ -411,7 +410,7 @@ var watermarkInterfaceTmpl = []byte(`
 
 				// Build imgproxy URL
 				const baseUrl = window.location.origin;
-				const signature = 'unsafe';
+                const signature = 'unsafe';
 				const processingOptions = options.join('/');
 				const sourceUrl = encodeURIComponent(formData.get('sourceUrl'));
 				
@@ -424,17 +423,20 @@ var watermarkInterfaceTmpl = []byte(`
 				
 				// Scroll to results
 				document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                // Mark UI access for API calls
+                document.cookie = "ui_access=1; path=/; max-age=86400";
 			}
 
 			// Initialize preview
-			updatePreview();
+            updatePreview();
 		</script>
 	</body>
 </html>
 `)
 
 func handleWatermarkInterface(reqID string, rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Add("Set-Cookie", uiAccessCookieName+"=1; Path=/; Max-Age=86400")
 	rw.WriteHeader(200)
 	rw.Write(watermarkInterfaceTmpl)
 } 

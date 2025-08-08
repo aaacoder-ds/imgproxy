@@ -7,6 +7,7 @@ var processingInterfaceTmpl = []byte(`
 <html>
 	<head>
 		<title>Image Processing Interface - imgproxy</title>
+		<meta charset="utf-8">
 		<meta name="description" content="Interactive image processing interface for imgproxy - resize, crop, filter, and transform images">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<style>
@@ -178,7 +179,6 @@ var processingInterfaceTmpl = []byte(`
 				<a href="/" class="active">Processing</a>
 				<a href="/watermark">Watermark</a>
 				<a href="/features">Features</a>
-				<a href="/api">API Docs</a>
 			</div>
 
 			<form id="processingForm">
@@ -267,7 +267,6 @@ var processingInterfaceTmpl = []byte(`
 			<a href="/processing">Image Processing</a> |
 			<a href="/watermark">Watermarking</a> |
 			<a href="/features">Features</a> |
-			<a href="/api">API Documentation</a> |
 			<a href="https://imgproxy.net/" target="_blank">imgproxy.net</a> |
 			<a href="https://dash.aaacoder.xyz/" target="_blank">Developer Tools</a>
 		</div>
@@ -281,7 +280,7 @@ var processingInterfaceTmpl = []byte(`
 		</script>
 
 		<script>
-			document.getElementById('processingForm').addEventListener('submit', function(e) {
+            document.getElementById('processingForm').addEventListener('submit', function(e) {
 				e.preventDefault();
 				processImage();
 			});
@@ -312,7 +311,7 @@ var processingInterfaceTmpl = []byte(`
 				}
 			}
 
-			function processImage() {
+            function processImage() {
 				const formData = new FormData(document.getElementById('processingForm'));
 				const params = new URLSearchParams();
 				
@@ -333,7 +332,7 @@ var processingInterfaceTmpl = []byte(`
 
 				// Build imgproxy URL
 				const baseUrl = window.location.origin;
-				const signature = 'unsafe'; // For demo purposes
+                const signature = 'unsafe'; // For demo purposes
 				const processingOptions = options.join('/');
 				const sourceUrl = encodeURIComponent(formData.get('sourceUrl'));
 				const extension = formData.get('format') || 'jpg';
@@ -347,6 +346,8 @@ var processingInterfaceTmpl = []byte(`
 				
 				// Scroll to results
 				document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+                // Mark UI access for API calls
+                document.cookie = "ui_access=1; path=/; max-age=86400";
 			}
 		</script>
 	</body>
@@ -354,7 +355,8 @@ var processingInterfaceTmpl = []byte(`
 `)
 
 func handleProcessingInterface(reqID string, rw http.ResponseWriter, r *http.Request) {
-	rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Set("Content-Type", "text/html")
+    rw.Header().Add("Set-Cookie", uiAccessCookieName+"=1; Path=/; Max-Age=86400")
 	rw.WriteHeader(200)
 	rw.Write(processingInterfaceTmpl)
 } 

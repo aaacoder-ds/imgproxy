@@ -5,6 +5,7 @@ import (
 	"crypto/subtle"
 	"fmt"
 	golog "log"
+    "net"
 	"net/http"
 	"time"
 
@@ -32,9 +33,17 @@ func buildRouter() *router.Router {
 	r.GET("/processing", handleProcessingInterface, true)
 	r.GET("/watermark", handleWatermarkInterface, true)
 	r.GET("/features", handleFeaturesInterface, true)
-	r.GET("/api", handleAPIInterface, true)
 
-	r.GET("/", withMetrics(withPanicHandler(withCORS(withSecret(handleProcessing)))), false)
+    // Static files
+    r.GET("/robots.txt", handleRobotsTxt, true)
+    r.GET("/sitemap.xml", handleSitemapXML, true)
+
+    // 404 page
+    r.GET("/404", handleNotFound, true)
+    r.NotFoundHandler = handleNotFound
+
+    // Image processing API, restricted to UI-originated requests or localhost
+    r.GET("/", withUIOnly(withMetrics(withPanicHandler(withCORS(withSecret(handleProcessing))))), false)
 
 	r.HEAD("/", withCORS(handleHead), false)
 	r.OPTIONS("/", withCORS(handleHead), false)
@@ -114,6 +123,30 @@ func withCORS(h router.RouteHandler) router.RouteHandler {
 
 		h(reqID, rw, r)
 	}
+}
+
+// withUIOnly ensures API is not accessible directly unless:
+// - request originates from localhost, or
+// - UI access cookie is present (set when serving UI pages)
+func withUIOnly(h router.RouteHandler) router.RouteHandler {
+    return func(reqID string, rw http.ResponseWriter, r *http.Request) {
+        // Allow localhost bypass
+        host, _, _ := net.SplitHostPort(r.RemoteAddr)
+        if ip := net.ParseIP(host); ip != nil {
+            if ip.IsLoopback() {
+                h(reqID, rw, r)
+                return
+            }
+        }
+
+        if _, err := r.Cookie(uiAccessCookieName); err == nil {
+            h(reqID, rw, r)
+            return
+        }
+
+        // Fallback to 404 page for non-authorized direct API access
+        handleNotFound(reqID, rw, r)
+    }
 }
 
 func withSecret(h router.RouteHandler) router.RouteHandler {
